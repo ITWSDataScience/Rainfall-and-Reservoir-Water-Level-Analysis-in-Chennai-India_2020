@@ -31,7 +31,7 @@ getwd()
 remove_drought_days <- function(f1, f2, ...) {
   # This function eliminate the redundant dry days (0 rainfall) in two datasets
   # accordingly. Specific configuration is set by feature variables a, b and c 
-  # below. These variables determine when is a prolonged period of drought,  
+  # below. These variables determine when there is a prolonged period of drought,  
   # how many days within should be taken out from that period and starting how
   # many days after last rain does the function start eliminating dry days.
   
@@ -63,9 +63,9 @@ remove_drought_days <- function(f1, f2, ...) {
     }
     else {
       # below the 3 numbers which determine the feature
-      if (k - j > 6) {  # a
-        l = k - j - 2   # b
-        j = j + 2       # c
+      if (k - j > 2) {  # a
+        l = k - j - 1   # b
+        j = j + 1      # c
         
         while (l > 0) { # delete l times at the location (j)
           f1 <- f1[-j]
@@ -101,12 +101,11 @@ tmp <- remove_drought_days(f_POONDI_WL, f_POONDI_RF)
 f_POONDI_WL <- as.numeric(as.character(factor(unlist(tmp["WL"]))))
 f_POONDI_RF <- as.numeric(as.character(factor(unlist(tmp["RF"]))))
 tmp.data <- data.frame(f_POONDI_WL, f_POONDI_RF)
-bf.test(f_POONDI_WL ~ as.factor(f_POONDI_RF), data=tmp.data, alpha = 0.05)
 #hist(f_POONDI_RF, breaks = 300, main="POONDI rainfall data processed")
 model1 <- aov(f_POONDI_WL ~ f_POONDI_RF)
 #leveneTest(as.numeric(as.character(factor(f_POONDI_WL))), factor(f_POONDI_RF))
 #fligner.test(f_POONDI_WL ~ f_POONDI_RF)
-model1.1 <- lm(f_POONDI_WL ~ 0 + f_POONDI_RF)
+#model1.1 <- lm(f_POONDI_WL ~ 0 + f_POONDI_RF)
 
 #kruskal.test(f_POONDI_WL ~ f_POONDI_RF)
 
@@ -153,7 +152,7 @@ f_CHOLAVARAM_WL <- as.numeric(as.character(factor(unlist(tmp["WL"]))))
 f_CHOLAVARAM_RF <- as.numeric(as.character(factor(unlist(tmp["RF"]))))
 #hist(f_CHOLAVARAM_RF, breaks = 300, main="CHOLAVARAM rainfall data processed")
 model2 <- aov(f_CHOLAVARAM_WL ~ f_CHOLAVARAM_RF)
-model2.1 <- lm(f_CHOLAVARAM_WL ~ 0 + f_CHOLAVARAM_RF)
+#model2.1 <- lm(f_CHOLAVARAM_WL ~ 0 + f_CHOLAVARAM_RF)
 #leveneTest(as.numeric(as.character(factor(f_CHOLAVARAM_WL))), factor(f_CHOLAVARAM_RF))
 #fligner.test(f_CHOLAVARAM_WL ~ f_CHOLAVARAM_RF)
 #kruskal.test(f_CHOLAVARAM_WL ~ f_CHOLAVARAM_RF)
@@ -172,7 +171,7 @@ model3 <- aov(f_REDHILLS_WL ~ f_REDHILLS_RF)
 #leveneTest(as.numeric(as.character(factor(f_REDHILLS_WL))), factor(f_REDHILLS_RF))
 #fligner.test(f_REDHILLS_WL ~ f_REDHILLS_RF)
 
-model3.1 <- lm(f_REDHILLS_WL ~ 0 + f_REDHILLS_RF)
+#model3.1 <- lm(f_REDHILLS_WL ~ 0 + f_REDHILLS_RF)
 
 #kruskal.test(f_REDHILLS_WL ~ f_REDHILLS_RF)
 
@@ -191,7 +190,7 @@ model4 <- aov(f_CHEMBARAMBAKKAM_WL ~ f_CHEMBARAMBAKKAM_RF)
 #leveneTest(as.numeric(as.character(factor(f_CHEMBARAMBAKKAM_WL))), factor(f_CHEMBARAMBAKKAM_RF))
 #fligner.test(f_CHEMBARAMBAKKAM_WL ~ f_CHEMBARAMBAKKAM_RF)
 
-model4.1 <- lm(f_CHEMBARAMBAKKAM_WL ~ 0 + f_CHEMBARAMBAKKAM_RF)
+#model4.1 <- lm(f_CHEMBARAMBAKKAM_WL ~ 0 + f_CHEMBARAMBAKKAM_RF)
 
 #kruskal.test(f_CHEMBARAMBAKKAM_WL ~ f_CHEMBARAMBAKKAM_RF)
 
@@ -200,15 +199,15 @@ summary(model2)
 summary(model3)
 summary(model4)
 
-summary(model1.1)
-summary(model2.1)
-summary(model3.1)
-summary(model4.1)
+#summary(model1.1)
+#summary(model2.1)
+#summary(model3.1)
+#summary(model4.1)
 
-plot(model1.1)
-plot(model2.1)
-plot(model3.1)
-plot(model4.1)
+#plot(model1.1)
+#plot(model2.1)
+#plot(model3.1)
+#plot(model4.1)
 
 
 plot(residuals(model2), fitted(model2))
@@ -217,6 +216,11 @@ plot(residuals(model2), fitted(model2))
 #shapiro_test(residuals(model2))
 #shapiro_test(residuals(model3))
 #shapiro_test(residuals(model4))
+
+plot(residuals(model1))
+plot(residuals(model2))
+plot(residuals(model3))
+plot(residuals(model4))
 
 hist(residuals(model1))
 hist(residuals(model2))
