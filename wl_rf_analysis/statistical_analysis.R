@@ -21,59 +21,59 @@ setwd("D:/onedrive/rpi/20fall/ITWS-4350/project")
 getwd()
 
 remove_drought_days <- function(f1, f2, ...) {
+  # This function eliminate the redundant dry days (0 rainfall) in two datasets
+  # accordingly. Specific configuration is set by feature variables a, b and c 
+  # below. These variables determine when is a prolonged period of drought,  
+  # how many days within should be taken out from that period and starting how
+  # many days after last rain does the function start eliminating dry days.
+  
   # use f1 for water levels
   # use f2 for rainfall
   
   fLen = length(f1)
   if (fLen != length(f2)) {
+    # do a simple validation on datasets. make sure lengths are the same
     stop('Error: factors lengths not equal')
   }
   
   i = 0
-  j = -1
-  k = -1
-  l = -1
+  j = -1 # dry days start date
+  k = -1 # dry days end date
+  l = -1 # days to eliminate from data
   
   for (val in f2) {
-    if (val == 0) {
-      if (k == -1){
-        if (j == -1) {
+    if (val == 0) { # if no rainfall, start tracking dates
+      if (k == -1){ 
+        if (j == -1) { # new drought period
           j = i
           k = i
         }
       }
-      else {
+      else { # update k
         k = i
       }
     }
     else {
-      if (k - j > 60) {
-        #l = floor((k - j)/2)
-        #j = j + ceiling((k - j)/4)
-        l = k - j - 20
-        j = j + 20
+      # below the 3 numbers which determine the feature
+      if (k - j > 6) {  # a
+        l = k - j - 2   # b
+        j = j + 2       # c
         
-        while (l > 0) {
+        while (l > 0) { # delete l times at the location (j)
           f1 <- f1[-j]
           f2 <- f2[-j]
+          i = i - 1 # update i, since some elements before are removed
+          #fLen = fLen - l
           l = l - 1
-          fLen = fLen - l
-          i = i - 1
         }
       }
+      # reset j and k
       j = -1
       k = -1
     }
     i = i + 1
   }
   
-  for (val in f2) {
-    if (val == 0) {
-      f1 <- f1[-i]
-      f2 <- f2[-i]
-    }
-    i = i + 1
-  }
   result <- list("WL" = f1, "RF" = f2)
   return(result)
 }
@@ -88,7 +88,6 @@ rain_data <- read.xlsx("chennai_reservoir_rainfall.xlsx", detectDates = TRUE)
 f_POONDI_WL <- as.numeric(as.character(factor(water_level_data$POONDI)))
 f_POONDI_RF <- as.numeric(as.character(factor(rain_data$POONDI)))
 #hist(f_POONDI_RF, breaks = 300)
-
 tmp <- remove_drought_days(f_POONDI_WL, f_POONDI_RF)
 f_POONDI_WL <- as.numeric(as.character(factor(unlist(tmp["WL"]))))
 f_POONDI_RF <- as.numeric(as.character(factor(unlist(tmp["RF"]))))
@@ -148,13 +147,13 @@ ggqqplot(residuals(model2))
 ggqqplot(residuals(model3))
 ggqqplot(residuals(model4))
 
+
 re_list <- list("POONDI" = residuals(model1), "CHOLAVARAM" = residuals(model2), "REDHILLS" = residuals(model3), "CHEMBARAMBAKKAM" = residuals(model4))
 boxplot(re_list, horizontal=TRUE)
 
-
 tests_data <- read.xlsx("feature_results.xlsx")
 
-# x, y, z variables
+# x1, y1, z1 variables corresponds to the a, b and c above
 x1 <- tests_data$a
 y1 <- tests_data$b
 z1 <- tests_data$c
