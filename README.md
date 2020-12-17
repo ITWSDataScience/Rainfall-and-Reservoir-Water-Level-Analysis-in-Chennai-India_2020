@@ -16,8 +16,8 @@ respective years as a further exploration.
 
 
 Data Information: The rainfall dataset shows the average rainfall received by the four 
-reservoirs in Chennai city monthly from 2004-2019. The reservoir level dataset includes 
-data recorded monthly on the reservoir level for the four reservoirs from 2004-2019. 
+reservoirs in Chennai city daily from 2004-2019. The reservoir level dataset includes 
+data recorded daily on the reservoir level for the four reservoirs from 2004-2019. 
 The population data is the population growth in Chennai city from 2004-2019.
 
 Source of Data: 
